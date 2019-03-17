@@ -1,0 +1,11 @@
+app:
+  env: dev
+  metaBase: /
+  net: testnet
+  netVersion: 1.2.0-beta3
+  localStoreKey: nulsAdvertisingDapp
+  nulsWorldUrl: https://testnet.nuls.world
+  api:
+    explorer:
+      host: http://localhost:3000
+      base: ''
