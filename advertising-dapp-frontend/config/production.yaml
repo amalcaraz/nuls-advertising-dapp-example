@@ -1,6 +1,6 @@
 app:
   env: production
-  metaBase: /nuls-advertising-dapp-example/
+  # metaBase: /nuls-advertising-dapp-example/
   api:
     explorer:
       host: https://explorer.nuls.services

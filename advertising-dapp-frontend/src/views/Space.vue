@@ -27,7 +27,8 @@
         <b-col cols="12" md="6">
           <section v-if="providers.length > 0">
             <h3>Registered providers</h3>
-            <p v-for="provider in providers" :key="provider">
+            <p v-for="(provider, index) in providers" :key="provider">
+              {{index === 0 ? '' : ', '}}
               <router-link class="provider-link" tag="span" :to="{ name: 'provider', query: { contract: provider } }">
                 {{provider}}
               </router-link>
