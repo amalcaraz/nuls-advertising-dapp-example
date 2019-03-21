@@ -22,59 +22,14 @@ public class AdvertisingProviderContract extends Owner implements AdvertisingPro
     private Set<Address> advertisementSpaces = new HashSet<>();
 
 
-    @Override
-    @Payable
-    public void registerIntoSpace(@Required Address spaceAddress) {
+    /**
+     * TODO: Implement the whole AdvertisingProvider interface:
+     * - registerIntoSpace
+     * - addAd
+     * - viewAds
+     * - printAd
+     */
 
-        String[][] args = new String[][] {{Msg.address().toString()}};
-        spaceAddress.call("registerProvider", "", args, BigInteger.ZERO);
-
-        advertisementSpaces.add(spaceAddress);
-
-    }
-
-    @Override
-    @Payable
-    public long addAd(@Required String text, String background) {
-
-        requireOwner();
-        require(text != null, "Text is required");
-
-        BigInteger price = Msg.value();
-        require(price.compareTo(BigInteger.ONE) >= 0, "Price must be greater than 1");
-
-        long id = Block.currentBlockHeader().getTime();
-        Advertisement ad = new Advertisement(id, price, text, background);
-        advertisements.put(id, ad);
-
-        return id;
-
-    }
-
-    @Override
-    @View
-    public List<Advertisement> viewAds() {
-
-        return new ArrayList<>(advertisements.values());
-
-    }
-
-    @Override
-    @Payable
-    public void printAd(@Required long id) {
-
-        require(advertisementSpaces.contains(Msg.sender()), "printAd can only be called by some advertisement space");
-
-        Advertisement ad = advertisements.get(id);
-
-        if (ad != null) {
-
-            advertisements.remove(id);
-            Msg.sender().transfer(ad.getPrice());
-
-        }
-
-    }
 
     @Payable
     public void removeAd(@Required long id) {
