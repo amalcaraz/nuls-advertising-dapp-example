@@ -9,18 +9,31 @@ import static io.nuls.contract.sdk.Utils.*;
 import java.math.BigInteger;
 import java.util.*;
 
-public class AdvertisingProviderContract extends Owner implements Contract {
+public class AdvertisingProviderContract extends Owner implements AdvertisingProvider, Contract {
 
+    /**
+     * Store all the Advertisement objects of the provider, identified by their Id (a timestamp)
+     */
     private Map<Long, Advertisement> advertisements = new HashMap<>();
+
+    /**
+     * Store a set of the advertisement-spaces where our provider are registered
+     */
     private Set<Address> advertisementSpaces = new HashSet<>();
 
-    @View
-    public List<Advertisement> viewAds() {
 
-        return new ArrayList<>(advertisements.values());
+    @Override
+    @Payable
+    public void registerIntoSpace(@Required Address spaceAddress) {
+
+        String[][] args = new String[][] {{Msg.address().toString()}};
+        spaceAddress.call("registerProvider", "", args, BigInteger.ZERO);
+
+        advertisementSpaces.add(spaceAddress);
 
     }
 
+    @Override
     @Payable
     public long addAd(@Required String text, String background) {
 
@@ -38,20 +51,15 @@ public class AdvertisingProviderContract extends Owner implements Contract {
 
     }
 
-    @Payable
-    public void removeAd(@Required long id) {
+    @Override
+    @View
+    public List<Advertisement> viewAds() {
 
-        requireOwner();
-
-        Advertisement ad = advertisements.get(id);
-
-        require(ad != null, "Ad not found");
-
-        advertisements.remove(id);
-        Msg.sender().transfer(ad.getPrice());
+        return new ArrayList<>(advertisements.values());
 
     }
 
+    @Override
     @Payable
     public void printAd(@Required long id) {
 
@@ -68,28 +76,24 @@ public class AdvertisingProviderContract extends Owner implements Contract {
 
     }
 
-    @View
-    public Set<String> viewSpaces() {
+    @Payable
+    public void removeAd(@Required long id) {
 
-        Set<String> ret = new HashSet<>();
+        requireOwner();
 
-        for (Address space : advertisementSpaces) {
+        Advertisement ad = advertisements.get(id);
 
-            ret.add("\"" + space + "\"");
+        require(ad != null, "Ad not found");
 
-        }
-
-        return ret;
+        advertisements.remove(id);
+        Msg.sender().transfer(ad.getPrice());
 
     }
 
-    @Payable
-    public void registerIntoSpace(@Required Address spaceAddress) {
+    @View
+    public Set<Address> viewSpaces() {
 
-        String[][] args = new String[][] {{Msg.address().toString()}};
-        spaceAddress.call("registerProvider", "", args, BigInteger.ZERO);
-
-        advertisementSpaces.add(spaceAddress);
+        return advertisementSpaces;
 
     }
 
