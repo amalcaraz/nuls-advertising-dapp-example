@@ -3,7 +3,7 @@
     <b-container>
       <b-row align-h="center">
         <b-col cols="4">
-          <ViewForm @submit="onSubmit"/>
+          <view-form @submit="onSubmit"/>
         </b-col>
       </b-row>
     </b-container>
@@ -21,10 +21,22 @@ export default {
   },
   methods: {
     onSubmit(data) {
-      this.$router.push({
-        name: "space",
-        query: { contract: data.contract, privateKey: data.privateKey },
-      });
+
+      if (data.type === 1) {
+
+        this.$router.push({
+          name: "space",
+          query: { contract: data.contract, privateKey: data.privateKey },
+        });
+
+      } else {
+
+        this.$router.push({
+          name: "provider",
+          query: { contract: data.contract },
+        });
+
+      }
     },
   },
 };

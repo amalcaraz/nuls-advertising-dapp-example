@@ -27,6 +27,7 @@
     </b-form-group>
 
     <b-form-group
+      v-if="form.type === 1"
       id="private-key-group"
       label="Private key:"
       label-for="private-key"
@@ -90,8 +91,9 @@ export default {
 
       this.validate = true;
 
-      if (this.addressValidation && this.privateKeyValidation) {
+      if (this.addressValidation && (this.form.type !== 1 || this.privateKeyValidation)) {
         this.$emit('submit', {
+          type: this.form.type,
           contract: this.form.address,
           privateKey: this.form.pk,
         });

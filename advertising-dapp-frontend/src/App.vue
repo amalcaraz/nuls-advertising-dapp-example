@@ -4,7 +4,9 @@
       <b-container>
         <b-row align-v="center" class="justify-content-center">
           <b-col cols="auto">
-            <img src="./assets/logo_nuls.png" alt="Logo NULS">
+            <router-link tag="a" :to="{ name: 'home' }">
+              <img src="./assets/logo_nuls.png" alt="Logo NULS">
+            </router-link>
           </b-col>
           <b-col class="title" cols="auto">NULS Advertising Dapp</b-col>
         </b-row>

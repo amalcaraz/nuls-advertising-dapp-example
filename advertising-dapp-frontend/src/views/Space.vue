@@ -3,14 +3,15 @@
     <b-container>
       <b-row align-h="center">
         <b-col cols="auto">
-          <div id="advertising-space" :class="{'empty': !currentAd}" :style="advertisingStyle">
-            <span>{{advertisingText}}</span>
-            <b-button class="btn" size="sm" @click="onClick">{{loading ? '...' : 'Update'}}</b-button>
-          </div>
+          <ad-space :ad="currentAd" :loading="loading" @updateAd="onUpdate"></ad-space>
         </b-col>
       </b-row>
       <b-row align-h="center">
         <b-col cols="12" md="6">
+          <section v-if="balance > 0">
+            <h3>Balance</h3>
+            <p>{{currentBalance}} NULS</p>
+          </section>
           <section>
             <h3>Lorem ipsum dolor sit amet</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam nec commodo turpis. Suspendisse lorem justo, sollicitudin eget tortor ac, ornare lobortis ligula. Morbi elit augue, viverra sed massa sed, mollis dictum lorem. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vivamus efficitur risus in quam tempus, posuere tristique sem efficitur. Nulla auctor elit convallis, pellentesque nisl nec, porta quam. Ut accumsan quis nisi vel feugiat. Duis justo augue, pretium quis venenatis cursus, semper eu sem. Donec interdum pretium ultricies.</p>
@@ -24,9 +25,13 @@
           </section>
         </b-col>
         <b-col cols="12" md="6">
-          <section>
-            <h3>Praesent est sapien</h3>
-            <p>Praesent est sapien, finibus sit amet ex quis, pulvinar consequat felis. Mauris eleifend nulla nunc, ac cursus ligula elementum vitae. Phasellus rutrum arcu neque, eu aliquet ligula accumsan a. Vivamus varius tortor quis felis volutpat imperdiet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus ultrices, libero et rhoncus consectetur, purus enim eleifend turpis, in elementum leo augue hendrerit metus. Aliquam eu mattis nulla. Mauris a placerat neque, nec condimentum lacus. Etiam non felis congue, malesuada lacus lacinia, gravida nunc.</p>
+          <section v-if="providers.length > 0">
+            <h3>Registered providers</h3>
+            <p v-for="provider in providers" :key="provider">
+              <router-link class="provider-link" tag="span" :to="{ name: 'provider', query: { contract: provider } }">
+                {{provider}}
+              </router-link>
+            </p>
           </section>
           <section>
             <h3>Nam condimentum neque</h3>
@@ -45,117 +50,111 @@
 </template>
 
 <script>
-import ViewForm from "@/components/ViewForm.vue";
-import { Account, Contract, AddressType, ChainIdType } from "nuls-js";
+import { Account, Contract, AddressType, ChainIdType } from 'nuls-js';
+import config from 'config';
+import AdSpace from '@/components/AdSpace.vue';
 
 export default {
-  name: "Space",
+  name: 'Space',
   components: {
-    ViewForm
+    AdSpace,
   },
   data() {
     return {
       contract: null,
       currentAd: null,
       account: null,
-      loading: false
+      loading: false,
+      balance: 0,
+      providers: []
     };
   },
   computed: {
-    advertisingText() {
-      return this.currentAd ? this.currentAd.text : 'Announce yourself here!';
+    currentBalance() {
+      return this.balance / 100000000;
     },
-    advertisingStyle() {
-
-      const style = {};
-
-      if (this.currentAd && this.currentAd.background.length > 0) {
-
-        // Is an HEX color
-        if (/^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(this.currentAd.background)) {
-
-          style['background-color'] = this.currentAd.background.charAt(0) !== '#' ? `#${this.currentAd.background}` : this.currentAd.background;
-
-        // base64 image
-        } else if (/^data:image\/([a-zA-Z]*);base64,([^\"]*)/.test(this.currentAd.background)) {
-
-          style['background-image'] = `url(${this.currentAd.background})`;
-
-        // image url
-        } else if (/^(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/){
-
-          style['background-image'] = `url(${this.currentAd.background})`;
-
-        }
-      }
-
-      return style;
-    }
   },
   async created() {
 
     this.loading = true;
 
     const contract = this.$route.query.contract;
-    const pk = this.$route.query.privateKey;
+    const privateKey = this.$route.query.privateKey;
 
     this.account = new Account().import(
-      pk,
+      privateKey,
       undefined,
       AddressType.Default,
       ChainIdType.Testnet
     );
 
     const contractConfig = {
-      api: {
-        // host: "http://localhost:3000"
-        host: "https://explorer.nuls.services"
-      }
+      api: config.app.api.explorer,
     };
 
     try {
+
       this.contract = await Contract.at(contract, contractConfig);
-      await this.viewCurrentAd();
-      await this.updateAd();
+
+      await this.fetchData();
+
     } catch (e) {
+
       alert(e);
+
     }
 
     this.loading = false;
+    
   },
   methods: {
     async viewCurrentAd() {
-      this.loading = true;
-
       this.currentAd = await this.contract.viewCurrentAd();
-      
-      this.loading = false;
     },
     async updateAd() {
       this.loading = true;
 
-      const pe = this.contract.updateAd({
+      await this.fetchData();
+
+      const contractCall = this.contract.updateAd({
         sender: this.account.address,
         privateKey: this.account.prikey
       });
 
-      pe.on("txHash", txHash => console.log(txHash));
+      contractCall.on('txHash', txHash => console.log(txHash));
 
       try {
-        await pe;
-        await this.viewCurrentAd();
+
+        const receipt = await contractCall;
+        await this.fetchData();
+
       } catch (e) {
-        if (e.toString().indexOf("Update not needed") === -1) {
+
+        if (e.toString().indexOf('Update not needed') === -1) {
           alert(e);
         }
+        
       }
 
       this.loading = false;
+
+      setTimeout(() => this.updateAd(), 1000 * 5);
+      
     },
-    onClick() {
-      if (this.loading) {
-        return;
-      }
+    async viewBalance() {
+      this.balance = await this.contract.viewBalance();
+    },
+    async viewProviders() {
+      this.providers = await this.contract.viewProviders();
+    },
+    async fetchData() {
+       await Promise.all([
+          this.viewCurrentAd(),
+          this.viewBalance(),
+          this.viewProviders(),
+        ]);
+    },
+    onUpdate() {
       this.updateAd();
     },
   },
@@ -163,33 +162,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#advertising-space {
-  border: 2px dotted #212529;
-  min-height: 90px;
-  width: 728px;
-  max-width: 100%;
-
-  display: flex;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-
-  background-size: cover;
-
-  &.empty {
-    background-image: radial-gradient(circle, #fff, #81bd39);
-  }
-
-  .btn {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    border-radius: 0 0 0 3px;
-    box-shadow: none !important;
-  }
-}
-
 section {
   padding: 10px 0;
 
@@ -205,5 +177,10 @@ section {
       width: 150px;
     }
   }
+}
+
+.provider-link {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

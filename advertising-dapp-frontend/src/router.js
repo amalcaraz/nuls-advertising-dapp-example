@@ -14,10 +14,12 @@ export default new Router({
     {
       path: '/space',
       name: 'space',
-      // route level code-splitting
-      // this generates a separate chunk (space.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "space" */ './views/Space.vue'),
+    },
+    {
+      path: '/provider',
+      name: 'provider',
+      component: () => import(/* webpackChunkName: "provider" */ './views/Provider.vue'),
     },
   ],
 });

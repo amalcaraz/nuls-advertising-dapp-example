@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "serve:prod": "export NODE_ENV=production && vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy:gh": "npm run build; push-dir --dir=dist --branch=gh-pages --cleanup"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",
@@ -24,6 +26,7 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.9.0",
+    "push-dir": "^0.4.1",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.5.21"
   }
