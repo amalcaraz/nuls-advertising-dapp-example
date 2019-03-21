@@ -1,6 +1,11 @@
 <template>
   <div class="space">
     <b-container>
+      <b-row>
+        <b-col cols="auto">
+          <h3 class="mb-4">Space address: ({{$route.query.contract}}):</h3>
+        </b-col>
+      </b-row>
       <b-row align-h="center">
         <b-col cols="auto">
           <ad-space :ad="currentAd" :loading="loading" @updateAd="onUpdate"></ad-space>
@@ -27,9 +32,8 @@
         <b-col cols="12" md="6">
           <section v-if="providers.length > 0">
             <h3>Registered providers</h3>
-            <p v-for="(provider, index) in providers" :key="provider">
-              {{index === 0 ? '' : ', '}}
-              <router-link class="provider-link" tag="span" :to="{ name: 'provider', query: { contract: provider } }">
+            <p v-for="provider in providers" :key="provider">
+              <router-link class="provider-link" tag="div" :to="{ name: 'provider', query: { contract: provider } }">
                 {{provider}}
               </router-link>
             </p>

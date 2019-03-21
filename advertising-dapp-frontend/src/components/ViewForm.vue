@@ -75,7 +75,7 @@ export default {
       show: true,
       validate: false,
       form: {
-        address: '',
+        address: 'TTb9gRKsjFYjr26LmKQEkP7MKuR1v4pd',
         pk: '',
         type: 1,
       },
