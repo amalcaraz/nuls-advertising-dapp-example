@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0e0e3aa-5604-4641-85ed-3dfe324061fa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/gmail/amalcaraz89/advertising/AdvertisingProvider.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../advertising-dapp-frontend/config/default.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../advertising-dapp-frontend/config/default.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../advertising-dapp-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../advertising-dapp-frontend/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../advertising-dapp-frontend/src/views/Space.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../advertising-dapp-frontend/src/views/Space.vue" afterDir="false" />
@@ -248,9 +250,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24969475" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24969475" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="UI Designer" order="3" />
@@ -271,7 +272,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24969475" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="right" id="Nuls" order="4" weight="0.34615386" />
+      <window_info active="true" anchor="right" id="Nuls" order="4" visible="true" weight="0.34615386" />
       <window_info anchor="right" id="Palette&#9;" order="5" />
       <window_info anchor="right" id="Maven Projects" order="6" />
     </layout>
