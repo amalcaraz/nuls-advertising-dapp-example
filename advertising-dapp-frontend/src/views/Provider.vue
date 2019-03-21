@@ -3,7 +3,7 @@
     <b-container>
       <b-row>
         <b-col cols="auto">
-          <h3>Provider ads list:</h3>
+          <h3 class="mb-4">Provider ads list ({{$route.query.contract}}):</h3>
         </b-col>
       </b-row>
       <b-row class="mb-2" align-v="center" align-h="start" v-for="ad in ads" :key="ad.id">
@@ -11,8 +11,8 @@
           <ad-space :ad="ad" :loading="loading" :btn="false" @updateAd="onUpdate"></ad-space>
         </b-col>
         <b-col cols="auto">
-          <p><strong>Id: </strong> {{ad.id}}</p>
-          <p><strong>price: </strong> {{ad.price}}</p>
+          <div><strong>Id: </strong> {{ad.id}}</div>
+          <div><strong>Price: </strong> {{ad.price / 100000000}} NULS</div>
         </b-col>
       </b-row>
     </b-container>
@@ -41,7 +41,7 @@ export default {
   computed: {
     orderedAds() {
       return ads.sort((a, b) => a.price - b.price);
-    }
+    },
   },
   async created() {
 
